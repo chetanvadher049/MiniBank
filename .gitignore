@@ -1,0 +1,4 @@
+out/
+*.class
+minibank.jar
+data/
