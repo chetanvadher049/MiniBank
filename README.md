@@ -77,6 +77,8 @@ coordinates repository lookups and checked banking exceptions, processes safe
 batches through `TransactionProcessor`, writes transaction reports, and
 persists state on startup and shutdown. The menu now provides real open,
 deposit, withdraw, transfer, list, search, batch, report, and exit operations.
+When opening an account, the user selects Savings, Current, or Fixed Deposit
+before entering the account details.
 
 The final menu is a working service-backed flow:
 

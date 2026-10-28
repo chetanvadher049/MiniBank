@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import exception.BankException;
 import exception.InsufficientFundsException;
 import model.Account;
+import model.AccountType;
 import model.BankInfo;
 import model.Command;
 import model.CurrentAccount;
@@ -387,6 +388,7 @@ public class MiniBank {
         try {
             switch (option) {
                 case OPEN_ACCOUNT -> {
+                    AccountType accountType = readAccountType(scanner);
                     System.out.print("Owner name: ");
                     String owner = scanner.nextLine();
                     System.out.print("Email: ");
@@ -395,7 +397,8 @@ public class MiniBank {
                     String mobile = scanner.nextLine();
                     System.out.print("Opening balance: ");
                     long balance = Long.parseLong(scanner.nextLine().trim());
-                    System.out.println("Opened: " + bankService.openAccount(owner, email, mobile, balance));
+                    System.out.println("Opened: " + bankService.openAccount(
+                            owner, email, mobile, balance, accountType));
                 }
                 case DEPOSIT -> {
                     System.out.print("Account number: ");
@@ -458,6 +461,29 @@ public class MiniBank {
             return Integer.parseInt(input);
         } catch (NumberFormatException exception) {
             return -1;
+        }
+    }
+
+    private static AccountType readAccountType(Scanner scanner) {
+        while (true) {
+            System.out.println("1. Savings Account");
+            System.out.println("2. Current Account");
+            System.out.println("3. Fixed Deposit Account");
+            System.out.print("Choose account type: ");
+
+            int choice = readMenuChoice(scanner);
+            AccountType accountType = switch (choice) {
+                case 1 -> AccountType.SAVINGS;
+                case 2 -> AccountType.CURRENT;
+                case 3 -> AccountType.FIXED_DEPOSIT;
+                default -> null;
+            };
+
+            if (accountType != null) {
+                System.out.println("Selected account type: " + accountType);
+                return accountType;
+            }
+            System.out.println("Invalid account type. Please choose 1, 2, or 3.");
         }
     }
 }

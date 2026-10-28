@@ -9,8 +9,11 @@ import exception.AccountNotFoundException;
 import exception.BankException;
 import exception.InvalidAmountException;
 import model.Account;
+import model.AccountType;
 import model.Command;
 import model.Customer;
+import model.CurrentAccount;
+import model.FixedDepositAccount;
 import model.SavingsAccount;
 import util.ReportGenerator;
 import util.Repository;
@@ -36,6 +39,15 @@ public final class BankService {
 
     public Account openAccount(String ownerName, String email, String mobile, long openingBalance)
             throws InvalidAmountException {
+        return openAccount(ownerName, email, mobile, openingBalance, AccountType.SAVINGS);
+    }
+
+    public Account openAccount(
+            String ownerName,
+            String email,
+            String mobile,
+            long openingBalance,
+            AccountType accountType) throws InvalidAmountException {
         if (ownerName == null || ownerName.isBlank()
                 || !Validator.isValidEmail(email) || !Validator.isValidMobile(mobile)) {
             throw new IllegalArgumentException("Invalid owner name, email, or mobile.");
@@ -43,7 +55,14 @@ public final class BankService {
         if (openingBalance < 0) {
             throw new InvalidAmountException(openingBalance);
         }
-        Account account = new SavingsAccount(ownerName, openingBalance, 0);
+        if (accountType == null) {
+            throw new IllegalArgumentException("Account type is required.");
+        }
+        Account account = switch (accountType) {
+            case SAVINGS -> new SavingsAccount(ownerName, openingBalance, 0);
+            case CURRENT -> new CurrentAccount(ownerName, openingBalance, 0);
+            case FIXED_DEPOSIT -> new FixedDepositAccount(ownerName, openingBalance);
+        };
         accounts.save(account);
         return account;
     }
